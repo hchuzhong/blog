@@ -7,33 +7,41 @@
 </template>
 
 <script>
+import request from "../helpers/request";
+import auth from "../api/auth";
+import blog from "../api/blog";
+
+window.request = request;
+window.auth = auth;
+window.blog = blog;
+
 export default {
   props: {
-    msg: String
+    msg: String,
   },
   methods: {
     onClick1() {
       this.$message({
-        message: "这是一条消息"
-      })
+        message: "这是一条消息",
+      });
     },
     onClick2() {
-      this.$alert('这是内容', '标题', {
+      this.$alert("这是内容", "标题", {
         confirmButtonText: "试试",
-        callback: action => {
+        callback: (action) => {
           this.$message({
-            type: 'info',
-            message: `action: ${action}`
-          })
-        }
-      })
-    }
-  }
-}
+            type: "info",
+            message: `action: ${action}`,
+          });
+        },
+      });
+    },
+  },
+};
 </script>
 
 <style scoped lang="less">
-  p {
-    color: red;
-  }
+p {
+  color: red;
+}
 </style>
