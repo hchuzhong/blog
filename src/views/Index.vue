@@ -1,64 +1,62 @@
 <template>
   <div id="index">
     <section class="blog-posts">
-      <div class="item">
+      <router-link
+        class="item"
+        v-for="blog in blogs"
+        :key="blog.id"
+        :to="`/detail/${blog.id}`"
+      >
         <figure class="avatar">
-          <img src="http://cn.gravatar.com/avatar/1?s=128&d=identicon" alt="" />
-          <figcaption>若愚</figcaption>
+          <img src="blog.user.avatar" alt="" />
+          <figcaption>{{ blog.user.username }}</figcaption>
         </figure>
-        <h3>前端异步大揭秘 <span>3天前</span></h3>
+        <h3>
+          {{ blog.title }} <span>{{ blog.createdAt }}</span>
+        </h3>
         <p>
-          本文以一个简单的文件读写为例，讲解了异步的不同写法，包括 普通的
-          callback、ES2016中的Promise和Generator、 Node 用于解决回调的co
-          模块、ES2017中的async/await。适合初步接触 Node.js以及少量
-          ES6语法的同学阅读...
+          {{ blog.description }}
         </p>
-      </div>
-      <div class="item">
-        <figure class="avatar">
-          <img src="http://cn.gravatar.com/avatar/1?s=128&d=identicon" alt="" />
-          <figcaption>若愚</figcaption>
-        </figure>
-        <h3>前端异步大揭秘 <span>3天前</span></h3>
-        <p>
-          本文以一个简单的文件读写为例，讲解了异步的不同写法，包括 普通的
-          callback、ES2016中的Promise和Generator、 Node 用于解决回调的co
-          模块、ES2017中的async/await。适合初步接触 Node.js以及少量
-          ES6语法的同学阅读...
-        </p>
-      </div>
+      </router-link>
+    </section>
+    <section>
+      <el-pagination
+        layout="prev, pager, next"
+        :total="total"
+        :current-page="page"
+        :page-size="20"
+        @current-change="onPageChange"
+      ></el-pagination>
     </section>
   </div>
 </template>
 
 <script>
-import request from "../helpers/request";
-import auth from "../api/auth";
 import blog from "../api/blog";
 
-window.request = request;
-window.auth = auth;
-window.blog = blog;
-
 export default {
-  props: {
-    msg: String,
+  data() {
+    return {
+      blogs: [],
+      total: 0,
+      page: 1,
+    };
+  },
+  created() {
+    this.page = parseInt(this.$route.query.page) || 1;
+    blog.getIndexBlogs({ page: this.page }).then((res) => {
+      this.blogs = res.data;
+      this.total = res.total;
+      this.page = res.page;
+    });
   },
   methods: {
-    onClick1() {
-      this.$message({
-        message: "这是一条消息",
-      });
-    },
-    onClick2() {
-      this.$alert("这是内容", "标题", {
-        confirmButtonText: "试试",
-        callback: (action) => {
-          this.$message({
-            type: "info",
-            message: `action: ${action}`,
-          });
-        },
+    onPageChange(newPage) {
+      blog.getIndexBlogs({ page: newPage }).then((res) => {
+        this.blogs = res.data;
+        this.total = res.total;
+        this.page = res.page;
+        this.$router.push({ path: "/", query: { page: newPage } });
       });
     },
   },

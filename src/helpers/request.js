@@ -39,14 +39,10 @@ export default function request(url, type = 'GET', data = {}) {
     })
 }
 
-
-// request('auth/login', 'POST', {username: 'hunger', password: '123456'})
-// .then(data => {
-//     console.log(data)
-// })
-
 /**
  * token 的作用：与后端进行校验，服务器发给客户端 token,客户端下次发送请求的时候要带上
+ *
+ * 将 token 存在 localStorage 中的话记得 logout 的时候将它从 localStorage 中 remove 掉，不然每次刷新都会变成登录状态
  *
  * jwt 鉴权原理
  * 好处
